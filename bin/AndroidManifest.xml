@@ -14,11 +14,11 @@
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.Black.NoTitleBar" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.PageIndicatorDefaults" >
+            android:theme="@style/Theme.PageIndicatorDefaults"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,9 @@
             </intent-filter>
         </activity>
         <activity android:name="com.czj.androidnews.GuideActivity" />
-        <activity android:name="com.czj.androidnews.SplashActivity" />
+        <activity
+            android:name="com.czj.androidnews.SplashActivity"
+             />
     </application>
 
 </manifest>
