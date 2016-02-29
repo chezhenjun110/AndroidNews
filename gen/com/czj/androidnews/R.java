@@ -528,7 +528,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int vpi__tab_unselected_pressed_holo=0x7f02003f;
     }
     public static final class id {
-        public static final int action_settings=0x7f09002d;
+        public static final int action_settings=0x7f09002f;
         public static final int bottom=0x7f090004;
         public static final int btn_back=0x7f09000f;
         public static final int btn_menu=0x7f090016;
@@ -547,6 +547,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int left=0x7f090006;
         public static final int ll_point_group=0x7f09000c;
         public static final int lv_list=0x7f09001f;
+        public static final int lv_news=0x7f09002e;
         public static final int lv_photo=0x7f090023;
         public static final int margin=0x7f090009;
         public static final int none=0x7f090001;
@@ -572,6 +573,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int view_red_point=0x7f09000d;
         public static final int vp_content=0x7f090018;
         public static final int vp_guide=0x7f09000a;
+        public static final int vp_image=0x7f09002d;
         public static final int vp_menu_detail=0x7f090027;
         public static final int wv_web=0x7f090012;
     }
@@ -599,7 +601,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int refresh_header=0x7f03000d;
         public static final int refresh_listview_footer=0x7f03000e;
         public static final int slidingmenumain=0x7f03000f;
-        public static final int tab_detail_pager=0x7f030010;
+        public static final int tab_detailpage=0x7f030010;
     }
     public static final class menu {
         public static final int main=0x7f0b0000;
