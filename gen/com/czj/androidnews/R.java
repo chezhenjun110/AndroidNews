@@ -528,11 +528,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int vpi__tab_unselected_pressed_holo=0x7f02003f;
     }
     public static final class id {
-        public static final int action_settings=0x7f09002f;
+        public static final int action_settings=0x7f090030;
         public static final int bottom=0x7f090004;
         public static final int btn_back=0x7f09000f;
         public static final int btn_menu=0x7f090016;
-        public static final int btn_next=0x7f090026;
+        public static final int btn_next=0x7f090028;
         public static final int btn_photo=0x7f090017;
         public static final int btn_share=0x7f090010;
         public static final int btn_size=0x7f090011;
@@ -540,19 +540,19 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int fl_content=0x7f09000e;
         public static final int fl_left_menu=0x7f090020;
         public static final int fullscreen=0x7f090008;
-        public static final int gv_photo=0x7f090024;
-        public static final int indicator=0x7f090025;
-        public static final int iv_arr=0x7f090028;
-        public static final int iv_pic=0x7f090021;
+        public static final int gv_photo=0x7f090027;
+        public static final int indicator=0x7f090023;
+        public static final int iv_arr=0x7f09002a;
+        public static final int iv_pic=0x7f090024;
         public static final int left=0x7f090006;
         public static final int ll_point_group=0x7f09000c;
         public static final int lv_list=0x7f09001f;
-        public static final int lv_news=0x7f09002e;
-        public static final int lv_photo=0x7f090023;
+        public static final int lv_news=0x7f09002f;
+        public static final int lv_photo=0x7f090026;
         public static final int margin=0x7f090009;
         public static final int none=0x7f090001;
         public static final int pb_progress=0x7f090013;
-        public static final int pb_pull_list_header=0x7f09002a;
+        public static final int pb_pull_list_header=0x7f09002c;
         public static final int rb_gov=0x7f09001d;
         public static final int rb_home=0x7f09001a;
         public static final int rb_news=0x7f09001b;
@@ -562,19 +562,20 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int right=0x7f090007;
         public static final int rl_root=0x7f090014;
         public static final int selected_view=0x7f090000;
-        public static final int slidingmenumain=0x7f09002c;
+        public static final int slidingmenumain=0x7f09002e;
         public static final int top=0x7f090005;
+        public static final int topnews_title=0x7f090022;
         public static final int triangle=0x7f090002;
-        public static final int tv_date=0x7f090022;
-        public static final int tv_pull_list_header_title=0x7f09002b;
-        public static final int tv_time=0x7f090029;
+        public static final int tv_date=0x7f090025;
+        public static final int tv_pull_list_header_title=0x7f09002d;
+        public static final int tv_time=0x7f09002b;
         public static final int tv_title=0x7f090015;
         public static final int underline=0x7f090003;
         public static final int view_red_point=0x7f09000d;
         public static final int vp_content=0x7f090018;
         public static final int vp_guide=0x7f09000a;
-        public static final int vp_image=0x7f09002d;
-        public static final int vp_menu_detail=0x7f090027;
+        public static final int vp_image=0x7f090021;
+        public static final int vp_menu_detail=0x7f090029;
         public static final int wv_web=0x7f090012;
     }
     public static final class integer {

@@ -17,17 +17,15 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import android.app.Activity;
-import android.content.Context;
-import android.preference.PreferenceActivity.Header;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
@@ -40,15 +38,21 @@ import android.widget.Toast;
  * @author czj
  * 
  */
-public class TabDetailPager extends BaseMenuDetailPager {
+public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeListener {
 	private TabData tabData;
 	private NewsTabData mTabData;
 	private TextView tvText;
+	@ViewInject(R.id.topnews_title)
+	private TextView topnews_title;
+	@ViewInject(R.id.vp_image)
 	private ViewPager mViewPager;
 	private ArrayList<TabNewsData> mTabNewsDatas;
+	@ViewInject(R.id.lv_news)
 	private ListView lv_news;
+	@ViewInject(R.id.indicator)
+	private CirclePageIndicator mcircle;
 	private BitmapUtils bitmapUtils;
-	private ImageView iv_pic;
+
 	private ArrayList<TopNewsData> mTopNewsDatasList;
 
 	public TabDetailPager(Activity activity, NewsTabData newsTabData) {
@@ -61,12 +65,11 @@ public class TabDetailPager extends BaseMenuDetailPager {
 	@Override
 	public View initViews() {
 		View view = View.inflate(mActivity, R.layout.tab_detailpage, null);
+		View headerview = View.inflate(mActivity, R.layout.list_headerview, null);
 		ViewUtils.inject(this, view);
-		mViewPager = (ViewPager) view.findViewById(R.id.vp_image);
-		lv_news = (ListView) view.findViewById(R.id.lv_news);
-		LayoutInflater li = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View headerview = li.inflate(R.layout.list_headerview, lv_news, false);
-		iv_pic = (ImageView) headerview.findViewById(R.id.iv_pic);
+		ViewUtils.inject(this, headerview);
+
+		lv_news.addHeaderView(headerview);
 
 		return view;
 
@@ -76,7 +79,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
 
 		public ListViewAdapter() {
 			bitmapUtils = new BitmapUtils(mActivity);
-			// TODO Auto-generated constructor stub
+		bitmapUtils.configDefaultLoadingImage(R.drawable.pic_item_list_default);
 		}
 
 		@Override
@@ -102,8 +105,10 @@ public class TabDetailPager extends BaseMenuDetailPager {
 			ViewHolder holder = new ViewHolder();
 
 			if (convertView != null) {
+				System.out.println("复用view对象:" + position);
 				holder = (ViewHolder) convertView.getTag();
 			} else {
+				System.out.println("创建新的view对象:" + position);
 				holder = new ViewHolder();
 				convertView = View.inflate(mActivity, R.layout.list_news_item, null);
 				holder.iv_pic = (ImageView) convertView.findViewById(R.id.iv_pic);
@@ -111,11 +116,12 @@ public class TabDetailPager extends BaseMenuDetailPager {
 				holder.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
 				convertView.setTag(holder);
 			}
-			
+
 			TabNewsData item = mTabNewsDatas.get(position);
-			bitmapUtils.display(holder.iv_pic, item.listimage);
+
 			holder.tv_title.setText(item.title);
 			holder.tv_date.setText(item.pubdate);
+			bitmapUtils.display(holder.iv_pic, item.listimage);
 			return convertView;
 		}
 	}
@@ -129,7 +135,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
 	class ViewPagernewsAdapter extends PagerAdapter {
 		public ViewPagernewsAdapter() {
 			bitmapUtils = new BitmapUtils(mActivity);
-			bitmapUtils.configDefaultLoadFailedImage(R.drawable.topnews_item_default);
+			bitmapUtils.configDefaultLoadingImage(R.drawable.topnews_item_default);
 		}
 
 		@Override
@@ -152,15 +158,15 @@ public class TabDetailPager extends BaseMenuDetailPager {
 
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-
-			iv_pic.setScaleType(ScaleType.FIT_XY);
+			ImageView image = new ImageView(mActivity);
+			image.setScaleType(ScaleType.FIT_XY);
 
 			TopNewsData topNewsData = mTopNewsDatasList.get(position);
 			String imageurl = topNewsData.topimage;
 
-			bitmapUtils.display(iv_pic, imageurl);
-			container.addView(iv_pic);
-			return iv_pic;
+			bitmapUtils.display(image, imageurl);
+			container.addView(image);
+			return image;
 		}
 	}
 
@@ -168,7 +174,15 @@ public class TabDetailPager extends BaseMenuDetailPager {
 	public void initData() {
 		getdatafromserver();
 		if (mTopNewsDatasList != null) {
+
 			mViewPager.setAdapter(new ViewPagernewsAdapter());
+			mcircle.setViewPager(mViewPager);
+			mcircle.setSnap(true);
+			mcircle.setOnPageChangeListener(this);
+
+			mcircle.onPageSelected(0);// 让指示器重新定位到第一个点
+
+			topnews_title.setText(mTopNewsDatasList.get(0).title);
 		}
 		if (mTabNewsDatas != null) {
 			lv_news.setAdapter(new ListViewAdapter());
@@ -202,6 +216,24 @@ public class TabDetailPager extends BaseMenuDetailPager {
 
 			}
 		});
+
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageSelected(int arg0) {
+		topnews_title.setText(mTopNewsDatasList.get(arg0).title);
 
 	}
 
