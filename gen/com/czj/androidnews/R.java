@@ -593,15 +593,16 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int fragment_content=0x7f030005;
         public static final int fragment_left_menu=0x7f030006;
         public static final int left_menu=0x7f030007;
-        public static final int list_menu_item=0x7f030008;
-        public static final int list_news_item=0x7f030009;
-        public static final int list_photo_item=0x7f03000a;
-        public static final int menu_photo_pager=0x7f03000b;
-        public static final int news_menu_detail=0x7f03000c;
-        public static final int refresh_header=0x7f03000d;
-        public static final int refresh_listview_footer=0x7f03000e;
-        public static final int slidingmenumain=0x7f03000f;
-        public static final int tab_detailpage=0x7f030010;
+        public static final int list_headerview=0x7f030008;
+        public static final int list_menu_item=0x7f030009;
+        public static final int list_news_item=0x7f03000a;
+        public static final int list_photo_item=0x7f03000b;
+        public static final int menu_photo_pager=0x7f03000c;
+        public static final int news_menu_detail=0x7f03000d;
+        public static final int refresh_header=0x7f03000e;
+        public static final int refresh_listview_footer=0x7f03000f;
+        public static final int slidingmenumain=0x7f030010;
+        public static final int tab_detailpage=0x7f030011;
     }
     public static final class menu {
         public static final int main=0x7f0b0000;

@@ -11,11 +11,12 @@ public class TabData {
 		public String more;
 		public ArrayList<TabNewsData> news;
 		public ArrayList<TopNewsData> topnews;
-
 		@Override
 		public String toString() {
 			return "TabDetail [title=" + title + ", more=" + more + ", news=" + news + ", topnews=" + topnews + "]";
 		}
+
+		
 
 	}
 
@@ -26,12 +27,13 @@ public class TabData {
 		public String title;
 		public String type;
 		public String url;
-
 		@Override
 		public String toString() {
-			return "TopNewsData [id=" + id + ", topimage=" + topimage + ", pubdate=" + pubdate + ", title=" + title
-					+ ", type=" + type + ", url=" + url + "]";
+			return "TopNewsData [topimage=" + topimage + ", title=" + title + "]";
 		}
+		
+
+		
 
 	}
 
@@ -42,12 +44,18 @@ public class TabData {
 		public String title;
 		public String type;
 		public String url;
-
 		@Override
 		public String toString() {
-			return "TabNewsData [id=" + id + ", listimage=" + listimage + ", pubdate=" + pubdate + ", title=" + title
-					+ ", type=" + type + ", url=" + url + "]";
+			return "TabNewsData [id=" + id + ", title=" + title + "]";
 		}
 
+		
+
 	}
+
+	@Override
+	public String toString() {
+		return "TabData [retcode=" + retcode + ", data=" + data + "]";
+	}
+	
 }
