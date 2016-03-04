@@ -2,6 +2,9 @@ package com.czj.androidnews.base;
 
 import java.util.ArrayList;
 
+import com.czj.androidnews.GuideActivity;
+import com.czj.androidnews.MainActivity;
+import com.czj.androidnews.NewsDetailsActivity;
 import com.czj.androidnews.R;
 import com.czj.androidnews.domain.NewsData.NewsTabData;
 import com.czj.androidnews.domain.TabData;
@@ -20,11 +23,16 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.webkit.WebView;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -38,7 +46,7 @@ import android.widget.Toast;
  * @author czj
  * 
  */
-public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeListener {
+public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeListener, OnItemClickListener {
 	private TabData tabData;
 	private NewsTabData mTabData;
 	private TextView tvText;
@@ -70,16 +78,22 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 		ViewUtils.inject(this, headerview);
 
 		lv_news.addHeaderView(headerview);
-
+		lv_news.setOnItemClickListener(this);
 		return view;
 
 	}
 
+	/**
+	 * ListView的适配器，初始化listview的数据
+	 * 
+	 * @author czj
+	 *
+	 */
 	class ListViewAdapter extends BaseAdapter {
 
 		public ListViewAdapter() {
 			bitmapUtils = new BitmapUtils(mActivity);
-		bitmapUtils.configDefaultLoadingImage(R.drawable.pic_item_list_default);
+			bitmapUtils.configDefaultLoadingImage(R.drawable.pic_item_list_default);
 		}
 
 		@Override
@@ -132,6 +146,12 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 		private TextView tv_date;
 	}
 
+	/**
+	 * 新闻头条图片viewpager的适配器
+	 * 
+	 * @author czj
+	 *
+	 */
 	class ViewPagernewsAdapter extends PagerAdapter {
 		public ViewPagernewsAdapter() {
 			bitmapUtils = new BitmapUtils(mActivity);
@@ -170,6 +190,9 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 		}
 	}
 
+	/**
+	 * 初始化数据
+	 */
 	@Override
 	public void initData() {
 		getdatafromserver();
@@ -189,6 +212,11 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 		}
 	}
 
+	/**
+	 * 格式化从服务器得到的字符串
+	 * 
+	 * @param result
+	 */
 	private void parser(String result) {
 		Gson gson = new Gson();
 		tabData = gson.fromJson(result, TabData.class);
@@ -198,6 +226,9 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 
 	}
 
+	/**
+	 * 使用xutils框架从服务器得到Json数据并格式化
+	 */
 	private void getdatafromserver() {
 		String url = GlobalContants.SERVER_URL + mTabData.url;
 		HttpUtils hu = new HttpUtils();
@@ -234,6 +265,17 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 	@Override
 	public void onPageSelected(int arg0) {
 		topnews_title.setText(mTopNewsDatasList.get(arg0).title);
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		String title = mTabNewsDatas.get(arg2-2).title;
+		String newsdetailsurl = mTabNewsDatas.get(arg2-2).url;// 拿到新闻详情页的url
+		System.out.println("拿到新闻详情页的标题和url:" +title+ newsdetailsurl);
+		Intent intent = new Intent(mActivity, NewsDetailsActivity.class);
+		intent.putExtra("url", newsdetailsurl);
+		mActivity.startActivity(intent);
 
 	}
 

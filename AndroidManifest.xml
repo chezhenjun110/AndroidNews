@@ -17,18 +17,18 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.PageIndicatorDefaults"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/Theme.PageIndicatorDefaults" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.czj.androidnews.NewsDetailsActivity" >
+        </activity>
         <activity android:name="com.czj.androidnews.GuideActivity" />
-        <activity
-            android:name="com.czj.androidnews.SplashActivity"
-             />
+        <activity android:name="com.czj.androidnews.SplashActivity" />
     </application>
 
 </manifest>
