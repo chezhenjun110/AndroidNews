@@ -2,8 +2,6 @@ package com.czj.androidnews.base;
 
 import java.util.ArrayList;
 
-import com.czj.androidnews.GuideActivity;
-import com.czj.androidnews.MainActivity;
 import com.czj.androidnews.NewsDetailsActivity;
 import com.czj.androidnews.R;
 import com.czj.androidnews.domain.NewsData.NewsTabData;
@@ -11,6 +9,8 @@ import com.czj.androidnews.domain.TabData;
 import com.czj.androidnews.domain.TabData.TabNewsData;
 import com.czj.androidnews.domain.TabData.TopNewsData;
 import com.czj.androidnews.global.GlobalContants;
+import com.czj.androidnews.view.TouchDownRefreshListview;
+import com.czj.androidnews.view.TouchDownRefreshListview.RefreshListener;
 import com.google.gson.Gson;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
@@ -28,8 +28,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.webkit.WebView;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -46,7 +44,8 @@ import android.widget.Toast;
  * @author czj
  * 
  */
-public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeListener, OnItemClickListener {
+public class TabDetailPager extends BaseMenuDetailPager
+		implements OnPageChangeListener, OnItemClickListener, RefreshListener {
 	private TabData tabData;
 	private NewsTabData mTabData;
 	private TextView tvText;
@@ -56,7 +55,7 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 	private ViewPager mViewPager;
 	private ArrayList<TabNewsData> mTabNewsDatas;
 	@ViewInject(R.id.lv_news)
-	private ListView lv_news;
+	private TouchDownRefreshListview lv_news;
 	@ViewInject(R.id.indicator)
 	private CirclePageIndicator mcircle;
 	private BitmapUtils bitmapUtils;
@@ -79,6 +78,7 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 
 		lv_news.addHeaderView(headerview);
 		lv_news.setOnItemClickListener(this);
+		lv_news.setOnRefreshListener(this);
 		return view;
 
 	}
@@ -269,13 +269,34 @@ public class TabDetailPager extends BaseMenuDetailPager implements OnPageChangeL
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		String title = mTabNewsDatas.get(arg2-2).title;
-		String newsdetailsurl = mTabNewsDatas.get(arg2-2).url;// 拿到新闻详情页的url
-		System.out.println("拿到新闻详情页的标题和url:" +title+ newsdetailsurl);
+	public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
+		int newposition = position - 2;
+		String title = mTabNewsDatas.get(newposition).title;
+		String newsdetailsurl = mTabNewsDatas.get(newposition).url;// 拿到新闻详情页的url
+		System.out.println("点击位置：" + newposition);
 		Intent intent = new Intent(mActivity, NewsDetailsActivity.class);
 		intent.putExtra("url", newsdetailsurl);
 		mActivity.startActivity(intent);
+
+	}
+
+	@Override
+	public void refresh() {
+		try {
+			Thread.sleep(2000);
+			Toast.makeText(mActivity, "刷新成功", Toast.LENGTH_SHORT).show();
+			lv_news.onRefreshComplete();
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+			Toast.makeText(mActivity, "刷新失败", Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
+	@Override
+	public void loadmore() {
+		// TODO Auto-generated method stub
 
 	}
 

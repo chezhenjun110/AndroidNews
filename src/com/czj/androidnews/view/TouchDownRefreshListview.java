@@ -1,6 +1,9 @@
 package com.czj.androidnews.view;
 
+import java.util.Date;
+
 import com.czj.androidnews.R;
+import com.lidroid.xutils.ViewUtils;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,17 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.util.Date;
-
-import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+
 public class TouchDownRefreshListview extends ListView implements OnScrollListener {
 
 	private final static int RELEASE_To_REFRESH = 0;// 下拉过程的状态值
@@ -32,58 +34,77 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 	// 实际的padding的距离与界面上偏移距离的比例
 	private final static int RATIO = 3;
 	private LayoutInflater inflater;
-
+	private LinearLayout footerview;
 	// ListView头部下拉刷新的布局
 	private LinearLayout headerView;
+
 	private TextView lvHeaderTipsTv;
+
 	private TextView lvHeaderLastUpdatedTv;
+
 	private ImageView lvHeaderArrowIv;
+
 	private ProgressBar lvHeaderProgressBar;
 
 	// 定义头部下拉刷新的布局的高度
+	private int footerContentHeight;
 	private int headerContentHeight;
-
 	private RotateAnimation animation;
 	private RotateAnimation reverseAnimation;
-
 	private int startY;
 	private int state;
 	private boolean isBack;
 
 	// 用于保证startY的值在一个完整的touch事件中只被记录一次
 	private boolean isRecored;
-
 	private OnRefreshListener refreshListener;
-
 	private boolean isRefreshable;
 
 	public TouchDownRefreshListview(Context context) {
 		super(context);
-		init(context);
+		initheaderview(context);
+		initfooterview(context);
 	}
 
 	public TouchDownRefreshListview(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(context);
+		initheaderview(context);
+		initfooterview(context);
 	}
 
-	private void init(Context context) {
+	private void initfooterview(Context context) {
+		footerview = (LinearLayout) inflater.inflate(R.layout.refresh_listview_footer, null);
+		this.addFooterView(footerview);
+
+		footerview.measure(0, 0);
+		footerContentHeight = footerview.getMeasuredHeight();
+
+		footerview.setPadding(0, -footerContentHeight, 0, 0);// 隐藏
+
+		this.setOnScrollListener(this);
+	}
+
+	private void initheaderview(Context context) {
 		setCacheColorHint(context.getResources().getColor(R.color.transparent));
 		inflater = LayoutInflater.from(context);
 		headerView = (LinearLayout) inflater.inflate(R.layout.refresh_header, null);
-		lvHeaderTipsTv = (TextView) headerView
-				.findViewById(R.id.lvHeaderTipsTv);
-		lvHeaderLastUpdatedTv = (TextView) headerView
-				.findViewById(R.id.lvHeaderLastUpdatedTv);
+		ViewUtils.inject(context, headerView);
+		lvHeaderArrowIv = (ImageView) headerView.findViewById(R.id.lvHeaderArrowIv);
+		lvHeaderLastUpdatedTv = (TextView) headerView.findViewById(R.id.lvHeaderLastUpdatedTv);
+		lvHeaderTipsTv = (TextView) headerView.findViewById(R.id.lvHeaderTipsTv);
+		lvHeaderProgressBar = (ProgressBar) headerView.findViewById(R.id.lvHeaderProgressBar);
+		// private TextView lvHeaderTipsTv;
+		//
+		// private TextView lvHeaderLastUpdatedTv;
+		//
+		// private ImageView lvHeaderArrowIv;
+		//
+		// private ProgressBar lvHeaderProgressBar;
 
-		lvHeaderArrowIv = (ImageView) headerView
-				.findViewById(R.id.lvHeaderArrowIv);
 		// 设置下拉刷新图标的最小高度和宽度
 		lvHeaderArrowIv.setMinimumWidth(70);
 		lvHeaderArrowIv.setMinimumHeight(50);
 
-		lvHeaderProgressBar = (ProgressBar) headerView
-				.findViewById(R.id.lvHeaderProgressBar);
 		measureView(headerView);
 		headerContentHeight = headerView.getMeasuredHeight();
 		// 设置内边距，正好距离顶部为一个负的整个布局的高度，正好把头部隐藏
@@ -96,15 +117,13 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 		setOnScrollListener(this);
 
 		// 设置旋转动画事件
-		animation = new RotateAnimation(0, -180,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+		animation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
 				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
 		animation.setInterpolator(new LinearInterpolator());
 		animation.setDuration(250);
 		animation.setFillAfter(true);
 
-		reverseAnimation = new RotateAnimation(-180, 0,
-				RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+		reverseAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
 				RotateAnimation.RELATIVE_TO_SELF, 0.5f);
 		reverseAnimation.setInterpolator(new LinearInterpolator());
 		reverseAnimation.setDuration(200);
@@ -122,14 +141,14 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem == 0) {
-                    isRefreshable = true;
-                 } else {
-					isRefreshable=false;
-				}
-                
-     }
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		if (firstVisibleItem == 0) {
+			isRefreshable = true;
+		} else {
+			isRefreshable = false;
+		}
+
+	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
@@ -205,14 +224,12 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 					}
 					// 更新headView的size
 					if (state == PULL_To_REFRESH) {
-						headerView.setPadding(0, -1 * headerContentHeight
-								+ (tempY - startY) / RATIO, 0, 0);
+						headerView.setPadding(0, -1 * headerContentHeight + (tempY - startY) / RATIO, 0, 0);
 
 					}
 					// 更新headView的paddingTop
 					if (state == RELEASE_To_REFRESH) {
-						headerView.setPadding(0, (tempY - startY) / RATIO
-								- headerContentHeight, 0, 0);
+						headerView.setPadding(0, (tempY - startY) / RATIO - headerContentHeight, 0, 0);
 					}
 
 				}
@@ -266,6 +283,9 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 			lvHeaderArrowIv.setVisibility(View.GONE);
 			lvHeaderTipsTv.setText("正在刷新...");
 			lvHeaderLastUpdatedTv.setVisibility(View.VISIBLE);
+			if (mListener != null) {
+				mListener.refresh();
+			}
 			break;
 		case DONE:
 			headerView.setPadding(0, -1 * headerContentHeight, 0, 0);
@@ -283,20 +303,16 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 	private void measureView(View child) {
 		ViewGroup.LayoutParams params = child.getLayoutParams();
 		if (params == null) {
-			params = new ViewGroup.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT,
+			params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 		}
-		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0,
-				params.width);
+		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, params.width);
 		int lpHeight = params.height;
 		int childHeightSpec;
 		if (lpHeight > 0) {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight,
-					MeasureSpec.EXACTLY);
+			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
 		} else {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(0,
-					MeasureSpec.UNSPECIFIED);
+			childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 		}
 		child.measure(childWidthSpec, childHeightSpec);
 	}
@@ -325,6 +341,18 @@ public class TouchDownRefreshListview extends ListView implements OnScrollListen
 	public void setAdapter(ListAdapter adapter) {
 		lvHeaderLastUpdatedTv.setText("最近更新:" + new Date().toLocaleString());
 		super.setAdapter(adapter);
+	}
+
+	RefreshListener mListener;
+
+	public void setOnRefreshListener(RefreshListener listener) {
+		mListener = listener;
+	}
+
+	public interface RefreshListener {
+		public void refresh();
+
+		public void loadmore();
 	}
 
 }
