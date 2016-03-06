@@ -75,7 +75,7 @@ public class LeftMenuFragment extends BaseFragment {
 
 	// 设置网络数据
 	public void setMenuData(NewsData data) {
-		System.out.println("侧边栏拿到数据啦:" + data);
+		System.out.println("侧边栏拿到数据啦");
 		mMenuList = data.data;
 		mAdapter = new MenuAdapter();
 		lvList.setAdapter(mAdapter);

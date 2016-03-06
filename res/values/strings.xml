@@ -4,5 +4,6 @@
     <string name="app_name">AndroidNews</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="share">一键分享</string>
 
 </resources>

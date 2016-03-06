@@ -1,19 +1,9 @@
 package com.czj.androidnews;
 
-import com.czj.androidnews.domain.NewsData;
-import com.czj.androidnews.domain.NewsData.NewsMenuData;
 import com.czj.androidnews.fragment.ContentFragment;
 import com.czj.androidnews.fragment.LeftMenuFragment;
-import com.czj.androidnews.global.GlobalContants;
-import com.google.gson.Gson;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -42,39 +32,6 @@ public class MainActivity extends SlidingFragmentActivity {
 		slidingMenu.setBehindOffset(250);// 设置预留屏幕的宽度
 
 		initFragment();
-		getdatafromserver();
-	}
-
-	private void getdatafromserver() {
-		HttpUtils httpUtils = new HttpUtils();
-		httpUtils.send(HttpMethod.GET, GlobalContants.CATEGORIES_URL, new RequestCallBack<String>() {
-
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				System.out.println("请求失败,失败原因为" + msg);
-				error.printStackTrace();
-
-			}
-
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = responseInfo.result;
-				System.out.println("从服务器获得数据" + result);
-				parserdata(result);
-			}
-		});
-
-	}
-
-	private void parserdata(String result) {
-		Gson gson = new Gson();
-		NewsData newsData = gson.fromJson(result, NewsData.class);
-		System.out.println("解析结果为：" + newsData);
-		NewsMenuData testString = newsData.data.get(0);
-		System.out.println("标题1为" + testString.title);
-		// 数据传递到leftmenufragment
-		LeftMenuFragment leftMenuFragment = getLeftMenuFragment();
-		leftMenuFragment.setMenuData(newsData);
 
 	}
 
