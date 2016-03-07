@@ -1,14 +1,10 @@
 package com.czj.androidnews.impl;
 
-import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.czj.androidnews.MainActivity;
@@ -105,7 +101,7 @@ public class NewsCenterPager extends BasePager {
 		mPagers = new ArrayList<BaseMenuDetailPager>();
 		mPagers.add(new NewsMenuDetailPager(mActivity, mNewsData.data.get(0).children));
 		mPagers.add(new TopicMenuDetailPager(mActivity));
-		mPagers.add(new PhotoMenuDetailPager(mActivity));
+		mPagers.add(new PhotoMenuDetailPager(mActivity, btnPhoto));
 		mPagers.add(new InteractMenuDetailPager(mActivity));
 
 		setCurrentMenuDetailPager(0);// 设置菜单详情页-新闻为默认当前页

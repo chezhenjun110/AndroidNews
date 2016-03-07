@@ -1,6 +1,14 @@
 package com.czj.androidnews.base;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+
+import org.apache.http.HttpConnection;
 
 import com.czj.androidnews.NewsDetailsActivity;
 import com.czj.androidnews.R;
@@ -27,7 +35,10 @@ import com.viewpagerindicator.CirclePageIndicator;
 import android.app.Activity;
 import android.app.usage.UsageEvents.Event;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
@@ -112,13 +123,13 @@ public class TabDetailPager extends BaseMenuDetailPager
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+
 			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+
 			return 0;
 		}
 
@@ -140,11 +151,51 @@ public class TabDetailPager extends BaseMenuDetailPager
 			String ids = PrefUtils.getString(mActivity, "read_ids", "");
 			if (ids.contains(item.id)) {
 				holder.tv_title.setTextColor(Color.GRAY);
+			} else {
+				holder.tv_title.setTextColor(Color.BLACK);
 			}
 			holder.tv_date.setText(item.pubdate);
-			bitmapUtils.display(holder.iv_pic, item.listimage);
+			// bitmapUtils.display(holder.iv_pic, item.listimage);
+
+			setimage(item.listimage, holder.iv_pic);
 			return convertView;
 		}
+
+	}
+
+	private void setimage(final String imageurl, final ImageView iv) {
+
+		new Thread() {
+
+			public void run() {
+
+				try {
+					URL url = new URL(imageurl);
+
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setRequestMethod("GET");
+					connection.setConnectTimeout(5000);
+					connection.setReadTimeout(5000);
+					connection.connect();
+					if (connection.getResponseCode() == 200) {
+						InputStream iStream = connection.getInputStream();
+						final Bitmap bitmap = BitmapFactory.decodeStream(iStream);
+						mActivity.runOnUiThread(new Runnable() {
+							public void run() {
+								iv.setImageBitmap(bitmap);
+								System.out.println("加载图片。。。");
+							}
+						});
+					}
+				} catch (Exception e) {
+
+					e.printStackTrace();
+
+				}
+
+			};
+		}.start();
+
 	}
 
 	static class ViewHolder {
@@ -226,12 +277,10 @@ public class TabDetailPager extends BaseMenuDetailPager
 	public void initData() {
 		String url = GlobalContants.SERVER_URL + mTabData.url;
 		String cache = CacheUtils.getcache(mActivity, url);
-		if (!TextUtils.isEmpty(cache)) {
-			System.out.println("从缓存中读取数据");
-			parser(cache);
-
-		}
-
+//		if (!TextUtils.isEmpty(cache)) {
+//			System.out.println("从缓存中读取数据");
+//			parser(cache);
+//		}
 		getdatafromserver(url);
 
 		if (mTopNewsDatasList != null) {
@@ -240,9 +289,7 @@ public class TabDetailPager extends BaseMenuDetailPager
 			mcircle.setViewPager(mViewPager);
 			mcircle.setSnap(true);
 			mcircle.setOnPageChangeListener(this);
-
 			mcircle.onPageSelected(0);// 让指示器重新定位到第一个点
-
 			topnews_title.setText(mTopNewsDatasList.get(0).title);
 		}
 		if (mTabNewsDatas != null) {
@@ -326,7 +373,6 @@ public class TabDetailPager extends BaseMenuDetailPager
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 		int newposition = position - 2;
-		String title = mTabNewsDatas.get(newposition).title;
 		String newsdetailsurl = mTabNewsDatas.get(newposition).url;// 拿到新闻详情页的url
 		System.out.println("点击位置：" + newposition);
 

@@ -20,7 +20,7 @@
             android:textSize="22sp" />
 
         <ImageButton
-            android:id="@+id/btn_menu"
+            android:id="@+id/btn_menu_slidingmenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

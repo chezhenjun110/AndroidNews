@@ -42,7 +42,7 @@ public class BasePager {
 
 		tvTitle = (TextView) mRootView.findViewById(R.id.tv_title);
 		flContent = (FrameLayout) mRootView.findViewById(com.czj.androidnews.R.id.fl_content);
-		btnMenu = (ImageButton) mRootView.findViewById(R.id.btn_menu);
+		btnMenu = (ImageButton) mRootView.findViewById(R.id.btn_menu_slidingmenu);
 		btnPhoto = (ImageButton) mRootView.findViewById(R.id.btn_photo);
 
 		btnMenu.setOnClickListener(new OnClickListener() {
