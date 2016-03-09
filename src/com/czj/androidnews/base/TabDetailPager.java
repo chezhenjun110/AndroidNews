@@ -1,14 +1,6 @@
 package com.czj.androidnews.base;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-
-import org.apache.http.HttpConnection;
 
 import com.czj.androidnews.NewsDetailsActivity;
 import com.czj.androidnews.R;
@@ -18,6 +10,7 @@ import com.czj.androidnews.domain.TabData.TabNewsData;
 import com.czj.androidnews.domain.TabData.TopNewsData;
 import com.czj.androidnews.global.GlobalContants;
 import com.czj.androidnews.utils.CacheUtils;
+import com.czj.androidnews.utils.MyBitmapUtils;
 import com.czj.androidnews.utils.PrefUtils;
 import com.czj.androidnews.view.TouchDownRefreshListview;
 import com.czj.androidnews.view.TouchDownRefreshListview.RefreshListener;
@@ -33,18 +26,13 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import android.app.Activity;
-import android.app.usage.UsageEvents.Event;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,10 +97,12 @@ public class TabDetailPager extends BaseMenuDetailPager
 	 *
 	 */
 	class ListViewAdapter extends BaseAdapter {
+		MyBitmapUtils mbUtils;
 
 		public ListViewAdapter() {
-			bitmapUtils = new BitmapUtils(mActivity);
-			bitmapUtils.configDefaultLoadingImage(R.drawable.pic_item_list_default);
+			mbUtils = new MyBitmapUtils();
+			// bitmapUtils = new BitmapUtils(mActivity);
+			// bitmapUtils.configDefaultLoadingImage(R.drawable.pic_item_list_default);
 		}
 
 		@Override
@@ -157,48 +147,13 @@ public class TabDetailPager extends BaseMenuDetailPager
 			holder.tv_date.setText(item.pubdate);
 			// bitmapUtils.display(holder.iv_pic, item.listimage);
 
-			setimage(item.listimage, holder.iv_pic);
+			mbUtils.display(item.listimage, holder.iv_pic);
 			return convertView;
 		}
 
 	}
 
-	private void setimage(final String imageurl, final ImageView iv) {
-
-		new Thread() {
-
-			public void run() {
-
-				try {
-					URL url = new URL(imageurl);
-
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-					connection.setRequestMethod("GET");
-					connection.setConnectTimeout(5000);
-					connection.setReadTimeout(5000);
-					connection.connect();
-					if (connection.getResponseCode() == 200) {
-						InputStream iStream = connection.getInputStream();
-						final Bitmap bitmap = BitmapFactory.decodeStream(iStream);
-						mActivity.runOnUiThread(new Runnable() {
-							public void run() {
-								iv.setImageBitmap(bitmap);
-								System.out.println("加载图片。。。");
-							}
-						});
-					}
-				} catch (Exception e) {
-
-					e.printStackTrace();
-
-				}
-
-			};
-		}.start();
-
-	}
-
-	static class ViewHolder {
+	class ViewHolder {
 		private ImageView iv_pic;
 		private TextView tv_title;
 		private TextView tv_date;
@@ -211,9 +166,12 @@ public class TabDetailPager extends BaseMenuDetailPager
 	 *
 	 */
 	class ViewPagernewsAdapter extends PagerAdapter {
+		MyBitmapUtils mbUtils;
+
 		public ViewPagernewsAdapter() {
-			bitmapUtils = new BitmapUtils(mActivity);
-			bitmapUtils.configDefaultLoadingImage(R.drawable.topnews_item_default);
+			mbUtils = new MyBitmapUtils();
+			// bitmapUtils = new BitmapUtils(mActivity);
+			// bitmapUtils.configDefaultLoadingImage(R.drawable.topnews_item_default);
 		}
 
 		@Override
@@ -239,7 +197,7 @@ public class TabDetailPager extends BaseMenuDetailPager
 			image.setScaleType(ScaleType.FIT_XY);
 			TopNewsData topNewsData = mTopNewsDatasList.get(position);
 			String imageurl = topNewsData.topimage;
-			bitmapUtils.display(image, imageurl);
+			mbUtils.display(imageurl, image);
 			image.setOnTouchListener(new topnewlistener());
 			container.addView(image);
 			return image;
@@ -277,10 +235,10 @@ public class TabDetailPager extends BaseMenuDetailPager
 	public void initData() {
 		String url = GlobalContants.SERVER_URL + mTabData.url;
 		String cache = CacheUtils.getcache(mActivity, url);
-//		if (!TextUtils.isEmpty(cache)) {
-//			System.out.println("从缓存中读取数据");
-//			parser(cache);
-//		}
+		// if (!TextUtils.isEmpty(cache)) {
+		// System.out.println("从缓存中读取数据");
+		// parser(cache);
+		// }
 		getdatafromserver(url);
 
 		if (mTopNewsDatasList != null) {

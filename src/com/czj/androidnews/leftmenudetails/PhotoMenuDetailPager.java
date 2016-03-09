@@ -118,12 +118,12 @@ public class PhotoMenuDetailPager extends BaseMenuDetailPager {
 
 		// private BitmapUtils utils;
 
-		private BitmapUtils utils;
+		private MyBitmapUtils mbUtils;
 
 		public PhotoAdapter() {
 			// utils = new BitmapUtils(mActivity);
 			// utils.configDefaultLoadingImage(R.drawable.news_pic_default);
-			utils = new BitmapUtils(mActivity);
+			mbUtils = new MyBitmapUtils();
 		}
 
 		@Override
@@ -160,7 +160,7 @@ public class PhotoMenuDetailPager extends BaseMenuDetailPager {
 
 			holder.tvTitle.setText(item.title);
 
-			utils.display(holder.ivPic, item.listimage);
+			mbUtils.display(item.listimage, holder.ivPic);
 
 			return convertView;
 		}
